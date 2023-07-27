@@ -178,11 +178,11 @@ extern const transfer_instance_t g_transfer19;
 extern dtc_instance_ctrl_t g_transfer19_ctrl;
 extern const transfer_cfg_t g_transfer19_cfg;
 /** SPI on SCI Instance. */
-extern const spi_instance_t g_spi3;
+extern const spi_instance_t SPI_SLAVE_PROVA;
 
 /** Access the SCI_SPI instance using these structures when calling API functions directly (::p_api is not used). */
-extern sci_spi_instance_ctrl_t g_spi3_ctrl;
-extern const spi_cfg_t g_spi3_cfg;
+extern sci_spi_instance_ctrl_t SPI_SLAVE_PROVA_ctrl;
+extern const spi_cfg_t SPI_SLAVE_PROVA_cfg;
 
 /** Called by the driver when a transfer has completed or an error has occurred (Must be implemented by the user). */
 #ifndef sci_spi_callback
