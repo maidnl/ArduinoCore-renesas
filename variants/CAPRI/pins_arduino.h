@@ -27,9 +27,13 @@ extern "C" unsigned int SCI_COUNT_fn();
 
 #define DAC8_HOWMANY  (1)
 #define DAC12_HOWMANY (1)
-#define DAC1         1
-#define DAC0        0
-#define IS_DAC(x)                                (x == DAC0 || x == DAC1)
+#define DAC         1
+#define DAC2        0
+
+#define DAC_A0      DAC2
+#define DAC_A1      DAC
+
+#define IS_DAC(x)                                (x == DAC || x == DAC2)
 #define DAC_ADDRESS_12_CH0                       R_DAC_BASE
 #define DAC_ADDRESS_8_CH0                        R_DAC8_BASE
 // TODO: check if true
