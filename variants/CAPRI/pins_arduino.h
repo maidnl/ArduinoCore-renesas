@@ -27,9 +27,11 @@ extern "C" unsigned int SCI_COUNT_fn();
 
 #define DAC8_HOWMANY  (1)
 #define DAC12_HOWMANY (1)
-#define DAC1         1
-#define DAC0        0
-#define IS_DAC(x)                                (x == DAC0 || x == DAC1)
+#define DAC         1
+#define DAC2        0
+#define IS_DAC(x)                                (x == DAC || x == DAC2)
+#define DAC_A0  DAC2
+#define DAC_A1  DAC
 #define DAC_ADDRESS_12_CH0                       R_DAC_BASE
 #define DAC_ADDRESS_8_CH0                        R_DAC8_BASE
 // TODO: check if true
@@ -121,7 +123,7 @@ static const uint8_t A10 = PIN_A10;
 #define UART2_RX_PIN        1
 
 #define USB_VID           (0x2341)
-#define USB_PID           (0x006D)
+#define USB_PID           (0x006F)
 #define USB_NAME          "Arduino Capri"
 
 #define NO_1200_BPS_RESET   1
@@ -145,7 +147,7 @@ static const uint8_t A10 = PIN_A10;
 #define PIN_SPI_MOSI  (10)
 #define PIN_SPI_MISO  (9)
 #define PIN_SPI_SCK   (8)
-#define PIN_SPI_CS    (-1)
+//#define PIN_SPI_CS    (-1)
 
 #define FORCE_SPI_MODE  (MODE_SPI)
 
