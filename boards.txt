@@ -203,13 +203,13 @@ capri.build.float-abi=
 capri.build.board=CAPRI
 capri.build.defines=-DF_CPU=48000000 -DFIRST_BULK_PIPE=4
 capri.vid.0=0x2341
-capri.pid.0=0x006D
+capri.pid.0=0x006F
 capri.vid.1=0x2341
-capri.pid.1=0x016D
+capri.pid.1=0x016F
 capri.upload_port.0.vid=0x2341
-capri.upload_port.0.pid=0x006D
+capri.upload_port.0.pid=0x006F
 capri.upload_port.1.vid=0x2341
-capri.upload_port.1.pid=0x016D
+capri.upload_port.1.pid=0x016F
 capri.compiler.fsp.defines={build.variant.path}/defines.txt
 capri.compiler.fsp.ldflags={build.variant.path}/ldflags.txt
 capri.compiler.fsp.cflags=-mthumb -D_RA_CORE=CM23 -D_RENESAS_RA_
@@ -225,7 +225,7 @@ capri.upload.protocol=
 capri.upload.transport=
 capri.upload.vid=0x2341
 # temporary, recompile bootloader with the right PID
-capri.upload.pid=0x016D
+capri.upload.pid=0x016F
 capri.upload.address=0x00010000
 capri.upload.interface=0
 capri.upload.use_1200bps_touch=false

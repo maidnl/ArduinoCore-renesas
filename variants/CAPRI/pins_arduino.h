@@ -121,8 +121,10 @@ static const uint8_t A10 = PIN_A10;
 #define UART2_RX_PIN        1
 
 #define USB_VID           (0x2341)
-#define USB_PID           (0x006D)
+#define USB_PID           (0x006F)
 #define USB_NAME          "Arduino Capri"
+
+
 
 #define NO_1200_BPS_RESET   1
 
