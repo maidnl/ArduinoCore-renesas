@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include "pinmux.inc"
+#include "FspTimer.h"
 /*
 const uint16_t P014[] = { LAST_ITEM_GUARD };
 const uint16_t P302[] = { LAST_ITEM_GUARD };
@@ -69,8 +70,14 @@ static const ioport_cfg_t bsp_pin_cfg = {
 static ioport_instance_ctrl_t ioport_ctrl;
 
 void initVariant() {
-    //R_IOPORT_Open(&ioport_ctrl, &bsp_pin_cfg);
-    //R_IOPORT_PinCfg(NULL, BSP_IO_PORT_09_PIN_14, (uint32_t) (IOPORT_CFG_PERIPHERAL_PIN | IOPORT_PERIPHERAL_USB_FS));
-    //R_IOPORT_PinCfg(NULL, BSP_IO_PORT_09_PIN_15, (uint32_t) (IOPORT_CFG_PERIPHERAL_PIN | IOPORT_PERIPHERAL_USB_FS));
-    //R_IOPORT_PinCfg(NULL, BSP_IO_PORT_04_PIN_07, (uint32_t) (IOPORT_CFG_PERIPHERAL_PIN | IOPORT_PERIPHERAL_USB_FS));
+  
+  FspTimer::set_initial_timer_channel_as_pwm(GPT_TIMER, GET_CHANNEL(getPinCfgs(0, PIN_CFG_REQ_PWM)[0]));
+  FspTimer::set_initial_timer_channel_as_pwm(GPT_TIMER, GET_CHANNEL(getPinCfgs(1, PIN_CFG_REQ_PWM)[0]));
+  FspTimer::set_initial_timer_channel_as_pwm(GPT_TIMER, GET_CHANNEL(getPinCfgs(2, PIN_CFG_REQ_PWM)[0]));
+  FspTimer::set_initial_timer_channel_as_pwm(GPT_TIMER, GET_CHANNEL(getPinCfgs(6, PIN_CFG_REQ_PWM)[0]));
+  FspTimer::set_initial_timer_channel_as_pwm(GPT_TIMER, GET_CHANNEL(getPinCfgs(7, PIN_CFG_REQ_PWM)[0]));
+  FspTimer::set_initial_timer_channel_as_pwm(GPT_TIMER, GET_CHANNEL(getPinCfgs(8, PIN_CFG_REQ_PWM)[0]));
+  FspTimer::set_initial_timer_channel_as_pwm(GPT_TIMER, GET_CHANNEL(getPinCfgs(4, PIN_CFG_REQ_PWM)[0]));
+  FspTimer::set_initial_timer_channel_as_pwm(AGT_TIMER, GET_CHANNEL(getPinCfgs(5, PIN_CFG_REQ_PWM)[0]));
+  
 }

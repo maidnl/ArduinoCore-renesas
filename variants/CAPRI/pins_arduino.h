@@ -29,9 +29,12 @@ extern "C" unsigned int SCI_COUNT_fn();
 #define DAC12_HOWMANY (1)
 #define DAC         1
 #define DAC2        0
+
+#define DAC_A0      DAC2
+#define DAC_A1      DAC
+
 #define IS_DAC(x)                                (x == DAC || x == DAC2)
-#define DAC_A0  DAC2
-#define DAC_A1  DAC
+
 #define DAC_ADDRESS_12_CH0                       R_DAC_BASE
 #define DAC_ADDRESS_8_CH0                        R_DAC8_BASE
 // TODO: check if true
@@ -126,10 +129,14 @@ static const uint8_t A10 = PIN_A10;
 #define USB_PID           (0x006F)
 #define USB_NAME          "Arduino Capri"
 
+
+
 #define NO_1200_BPS_RESET   1
 
-#define GPT_HOWMANY       6
 #define GTP32_HOWMANY     1
+#define GTP16_HOWMANY     6
+#define GPT_HOWMANY       7
+/****** AGT CORE DEFINES *******/
 #define AGT_HOWMANY       2
 
 /****** WIRE CORE DEFINES ******/
