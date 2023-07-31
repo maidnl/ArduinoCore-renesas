@@ -34,6 +34,7 @@ extern "C" unsigned int SCI_COUNT_fn();
 #define DAC_A1      DAC
 
 #define IS_DAC(x)                                (x == DAC || x == DAC2)
+
 #define DAC_ADDRESS_12_CH0                       R_DAC_BASE
 #define DAC_ADDRESS_8_CH0                        R_DAC8_BASE
 // TODO: check if true
@@ -153,7 +154,7 @@ static const uint8_t A10 = PIN_A10;
 #define PIN_SPI_MOSI  (10)
 #define PIN_SPI_MISO  (9)
 #define PIN_SPI_SCK   (8)
-#define PIN_SPI_CS    (-1)
+//#define PIN_SPI_CS    (-1)
 
 #define FORCE_SPI_MODE  (MODE_SPI)
 
