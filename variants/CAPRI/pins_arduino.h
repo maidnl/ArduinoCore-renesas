@@ -132,8 +132,10 @@ static const uint8_t A10 = PIN_A10;
 
 #define NO_1200_BPS_RESET   1
 
-#define GPT_HOWMANY       6
 #define GTP32_HOWMANY     1
+#define GTP16_HOWMANY     6
+#define GPT_HOWMANY       7
+/****** AGT CORE DEFINES *******/
 #define AGT_HOWMANY       2
 
 /****** WIRE CORE DEFINES ******/
