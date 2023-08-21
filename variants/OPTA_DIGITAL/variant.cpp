@@ -56,7 +56,7 @@ extern "C" const PinMuxCfg_t g_pin_cfg[] = {
   { BSP_IO_PORT_05_PIN_00,    P500   }, /* (26) A12 rev 0.1  */
   { BSP_IO_PORT_01_PIN_01,    P101   }, /* (27) A13 rev 0.1  */
   { BSP_IO_PORT_01_PIN_02,    P102   }, /* (28) A14 rev 0.1  */
-  { BSP_IO_PORT_01_PIN_03,    P001   }, /* (29) A15 rev 0.1  */
+  { BSP_IO_PORT_01_PIN_03,    P103   }, /* (29) A15 rev 0.1  */
   /* DIGITAL CONTROLS */
   { BSP_IO_PORT_03_PIN_04,    P304   }, /* (30) DETECT_IN  rev 0.1  */
   { BSP_IO_PORT_01_PIN_04,    P104   }, /* (31) DETECT_OUT rev 0.1  */
@@ -64,8 +64,8 @@ extern "C" const PinMuxCfg_t g_pin_cfg[] = {
   { BSP_IO_PORT_03_PIN_02,    P302   }, /* (32) UART_TX  rev 0.1  */
   { BSP_IO_PORT_03_PIN_01,    P301   }, /* (33) UART_RX  rev 0.1  */
   /* I2C */
-  { BSP_IO_PORT_04_PIN_11,    P411   }, /* (34) SDA  rev 0.1  */
-  { BSP_IO_PORT_04_PIN_10,    P410   }, /* (35) SCL  rev 0.1  */
+  { BSP_IO_PORT_04_PIN_01,    P401   }, /* (34) SDA  rev 0.1  */
+  { BSP_IO_PORT_04_PIN_00,    P400   }, /* (35) SCL  rev 0.1  */
   
   /* CAN ? */
 
