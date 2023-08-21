@@ -425,6 +425,60 @@ void TwoWire::begin(void) {
 }
 
 /* -------------------------------------------------------------------------- */
+bool TwoWire::setAddress(uint16_t add) {
+/* -------------------------------------------------------------------------- */  
+  if(init_ok && !is_master) {
+    slave_address   = add;
+    s_i2c_cfg.slave = slave_address;
+    s_close(&s_i2c_ctrl);
+    if(FSP_SUCCESS == s_open(&s_i2c_ctrl,&s_i2c_cfg)) {
+        init_ok = true;
+    }
+    else {
+        init_ok = false;
+    }
+    return init_ok;
+  }
+  return false;
+}
+
+/* -------------------------------------------------------------------------- */
+bool TwoWire::setAddress(uint8_t add) {
+/* -------------------------------------------------------------------------- */  
+  if(init_ok && !is_master) {
+    slave_address   = (uint16_t)add;
+    s_i2c_cfg.slave = slave_address;
+    s_close(&s_i2c_ctrl);
+    if(FSP_SUCCESS == s_open(&s_i2c_ctrl,&s_i2c_cfg)) {
+        init_ok = true;
+    }
+    else {
+        init_ok = false;
+    }
+    return init_ok;
+  }
+  return false;
+}
+
+/* -------------------------------------------------------------------------- */
+bool TwoWire::setAddress(int add) {
+/* -------------------------------------------------------------------------- */  
+  if(init_ok && !is_master) {
+    slave_address   = (uint16_t)add;
+    s_i2c_cfg.slave = slave_address;
+    s_close(&s_i2c_ctrl);
+    if(FSP_SUCCESS == s_open(&s_i2c_ctrl,&s_i2c_cfg)) {
+        init_ok = true;
+    }
+    else {
+        init_ok = false;
+    }
+    return init_ok;
+  }
+  return false;
+}
+
+/* -------------------------------------------------------------------------- */
 void TwoWire::begin(uint16_t address) {
 /* -------------------------------------------------------------------------- */  
   is_master = false;
@@ -449,6 +503,11 @@ void TwoWire::begin(uint8_t address) {
   slave_address = (uint16_t)address;
   begin((uint16_t)address);
 }
+
+
+
+
+
 
 /* -------------------------------------------------------------------------- */
 void TwoWire::end(void) {
@@ -696,8 +755,12 @@ size_t TwoWire::requestFrom(uint8_t address, size_t quantity) {
 /* -------------------------------------------------------------------------- */
 size_t TwoWire::write(uint8_t data) {
 /* -------------------------------------------------------------------------- */  
+  Serial.print("Wire data ");
+  Serial.println(data);
+
   if(init_ok) {
     if(is_master) {
+      Serial.println("master");
       if(transmission_begun) {
         if(tx_index >= I2C_BUFFER_LENGTH) {
           data_too_long = true;
@@ -709,8 +772,10 @@ size_t TwoWire::write(uint8_t data) {
       }
     }
     else {
+      Serial.println("slave");
       if(s_write != nullptr) {
-        s_write(&s_i2c_ctrl,(uint8_t *)&data,1);
+        fsp_err_t err = s_write(&s_i2c_ctrl,(uint8_t *)&data,1);
+        Serial.println((int)err);
       }
     }
     return 1;

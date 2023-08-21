@@ -115,6 +115,14 @@ class TwoWire : public arduino::HardwareI2C {
     void beginTransmission(uint16_t);
     void beginTransmission(uint8_t);
     void beginTransmission(int);
+
+    /* setAddress can be used to change the address of a slave device once it
+       already been set by a begin 
+       if begin (with address) has not already be called this function has no
+       effect */
+    bool setAddress(uint16_t);
+    bool setAddress(uint8_t);
+    bool setAddress(int);
  
     uint8_t endTransmission(void);
     uint8_t endTransmission(bool);
