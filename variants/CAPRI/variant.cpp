@@ -67,6 +67,14 @@ static const ioport_cfg_t bsp_pin_cfg = {
   .number_of_pins = sizeof(bsp_pin_cfg_data) / sizeof(ioport_pin_cfg_t),
   .p_pin_cfg_data = &bsp_pin_cfg_data[0],
 };
+
+extern "C" {
+    unsigned int PINCOUNT_fn() {
+        return (sizeof(g_pin_cfg) / sizeof(g_pin_cfg[0]));
+    }
+}
+
+
 static ioport_instance_ctrl_t ioport_ctrl;
 
 void initVariant() {
