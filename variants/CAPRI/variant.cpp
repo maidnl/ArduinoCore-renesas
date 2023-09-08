@@ -74,6 +74,10 @@ extern "C" {
     }
 }
 
+void usb_post_initialization() {
+  ((R_USB_FS0_Type*)R_USB_FS0_BASE)->USBMC_b.VDCEN = 1;
+  ((R_USB_FS0_Type*)R_USB_FS0_BASE)->SYSCFG_b.DPRPU = 1;
+}
 
 static ioport_instance_ctrl_t ioport_ctrl;
 
