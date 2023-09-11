@@ -2,6 +2,10 @@
 
 #define PIN(X,Y) (X * 16 + Y)
 
+#ifdef __cplusplus
+extern "C" unsigned int PINCOUNT_fn();
+#endif
+
 // Pin count
 // ----
 #define PINS_COUNT           (PINCOUNT_fn())

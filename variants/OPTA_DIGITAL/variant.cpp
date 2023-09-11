@@ -88,6 +88,12 @@ int32_t getPinIndex(bsp_io_port_pin_t p) {
   return rv;
 }
 
+extern "C" {
+    unsigned int PINCOUNT_fn() {
+        return (sizeof(g_pin_cfg) / sizeof(g_pin_cfg[0]));
+    }
+}
+
 #include "FspTimer.h"
 
 void initVariant() {
