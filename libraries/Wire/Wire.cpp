@@ -196,7 +196,9 @@ TwoWire::TwoWire(int scl, int sda, WireAddressMode_t am /*= ADDRESS_MODE_7_BITS*
   data_too_long(false),
   rx_index(0),
   tx_index(0),
-  require_sci(prefer_sci) {
+  require_sci(prefer_sci),
+  master_irq_added(false),
+  slave_irq_added(false) {
 /* -------------------------------------------------------------------------- */    
       m_i2c_cfg.rxi_irq = FSP_INVALID_VECTOR;
       m_i2c_cfg.txi_irq = FSP_INVALID_VECTOR;
@@ -367,8 +369,9 @@ void TwoWire::begin(void) {
     init_ok = false;
     return;
   }
-
+   
   if(is_master) {
+    if(!master_irq_added) {
       I2CIrqMasterReq_t irq_req;
       irq_req.ctrl = &m_i2c_ctrl; 
       irq_req.cfg = &m_i2c_cfg;
@@ -383,15 +386,21 @@ void TwoWire::begin(void) {
       else {
         init_ok &= IRQManager::getInstance().addPeripheral(IRQ_I2C_MASTER,&irq_req);
       }
+      master_irq_added = true;
+    }
       if(FSP_SUCCESS == m_open(&m_i2c_ctrl,&m_i2c_cfg)) {
          init_ok &= true;
       }
       else {
          init_ok = false;
       }
+
   }
   else {
+     if(!slave_irq_added) {
       init_ok &= IRQManager::getInstance().addPeripheral(IRQ_I2C_SLAVE,&s_i2c_cfg);
+      slave_irq_added = true;
+    }
       if(FSP_SUCCESS == s_open(&s_i2c_ctrl,&s_i2c_cfg)) {
          init_ok &= true;
       }
