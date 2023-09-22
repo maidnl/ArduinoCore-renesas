@@ -773,12 +773,9 @@ size_t TwoWire::requestFrom(uint8_t address, size_t quantity) {
 /* -------------------------------------------------------------------------- */
 size_t TwoWire::write(uint8_t data) {
 /* -------------------------------------------------------------------------- */  
-  Serial.print("Wire data ");
-  Serial.println(data);
-
   if(init_ok) {
     if(is_master) {
-      Serial.println("master");
+      
       if(transmission_begun) {
         if(tx_index >= I2C_BUFFER_LENGTH) {
           data_too_long = true;
@@ -790,10 +787,8 @@ size_t TwoWire::write(uint8_t data) {
       }
     }
     else {
-      Serial.println("slave");
       if(s_write != nullptr) {
-        fsp_err_t err = s_write(&s_i2c_ctrl,(uint8_t *)&data,1);
-        Serial.println((int)err);
+        s_write(&s_i2c_ctrl,(uint8_t *)&data,1);
       }
     }
     return 1;
