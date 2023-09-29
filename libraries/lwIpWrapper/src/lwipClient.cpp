@@ -8,7 +8,7 @@ extern "C" {
 
 /* -------------------------------------------------------------------------- */
 lwipClient::lwipClient()
-    : _tcp_client(NULL)
+    : _tcp_client(NULL), _provided_tcp_client(false)
 {
 }
 /* -------------------------------------------------------------------------- */
@@ -17,15 +17,28 @@ lwipClient::lwipClient()
 sketches but sock is ignored. */
 /* -------------------------------------------------------------------------- */
 lwipClient::lwipClient(uint8_t sock)
-    : _tcp_client(NULL)
+    : _tcp_client(NULL), _provided_tcp_client(false)
+
 {
 }
 /* -------------------------------------------------------------------------- */
 
 /* -------------------------------------------------------------------------- */
 lwipClient::lwipClient(struct tcp_struct* tcpClient)
+    : _tcp_client(tcpClient), _provided_tcp_client(true)
+
 {
-    _tcp_client = tcpClient;
+}
+/* -------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------- */
+lwipClient::~lwipClient() 
+{
+    stop();
+
+    if(!_provided_tcp_client) {
+        mem_free(_tcp_client); 
+    }
 }
 /* -------------------------------------------------------------------------- */
 
@@ -158,9 +171,13 @@ int lwipClient::read()
     uint8_t b;
     if ((_tcp_client != NULL) && (_tcp_client->data.p != NULL)) {
         __disable_irq();
-        pbuffer_get_data(&(_tcp_client->data), &b, 1);
+        int rv = pbuffer_get_data(&(_tcp_client->data), &b, 1);
         __enable_irq();
-        return b;
+        if(rv == 1) {
+            return b;
+        } else {
+            return -1;
+        }
     }
     // No data available
     return -1;
