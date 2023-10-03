@@ -1,9 +1,9 @@
 #include "lwipTcp.h"
 
 #if LWIP_TCP
-static err_t tcp_recv_callback(void* arg, struct tcp_pcb* tpcb, struct pbuf* p, err_t err);
-static err_t tcp_sent_callback(void* arg, struct tcp_pcb* tpcb, u16_t len);
-static void tcp_err_callback(void* arg, err_t err);
+err_t tcp_recv_callback(void* arg, struct tcp_pcb* tpcb, struct pbuf* p, err_t err);
+err_t tcp_sent_callback(void* arg, struct tcp_pcb* tpcb, u16_t len);
+void tcp_err_callback(void* arg, err_t err);
 /**
  * @brief Function called when TCP connection established
  * @param arg: user supplied argument
@@ -43,84 +43,13 @@ err_t tcp_connected_callback(void* arg, struct tcp_pcb* tpcb, err_t err)
 }
 
 /**
- * @brief  This function is the implementation of tcp_accept LwIP callback
- * @param arg user supplied argument
- * @param  newpcb: pointer on tcp_pcb struct for the newly created tcp connection
- * @param err: when connection correctly established err should be ERR_OK
- * @retval err_t: error status
- */
-err_t tcp_accept_callback(void* arg, struct tcp_pcb* newpcb, err_t err)
-{
-    err_t ret_err;
-    uint8_t accepted;
-    struct tcp_struct** tcpClient = (struct tcp_struct**)arg;
-
-    /* set priority for the newly accepted tcp connection newpcb */
-    tcp_setprio(newpcb, TCP_PRIO_MIN);
-
-    if ((tcpClient != NULL) && (ERR_OK == err)) {
-        struct tcp_struct* client = (struct tcp_struct*)mem_malloc(sizeof(struct tcp_struct));
-
-        if (client != NULL) {
-            client->state = TCP_ACCEPTED;
-            client->pcb = newpcb;
-            client->data.p = NULL;
-            client->data.available = 0;
-
-            /* Looking for an empty socket */
-            for (uint16_t i = 0; i < MAX_CLIENT; i++) {
-                if (tcpClient[i] == NULL) {
-                    tcpClient[i] = client;
-                    accepted = 1;
-                    break;
-                }
-            }
-
-            if (accepted) {
-                /* pass newly allocated client structure as argument to newpcb */
-                tcp_arg(newpcb, client);
-
-                /* initialize lwip tcp_recv callback function for newpcb  */
-                tcp_recv(newpcb, tcp_recv_callback);
-
-                /* initialize lwip tcp_err callback function for newpcb  */
-                tcp_err(newpcb, tcp_err_callback);
-
-                /* initialize LwIP tcp_sent callback function */
-                tcp_sent(newpcb, tcp_sent_callback);
-
-                ret_err = ERR_OK;
-            } else {
-                /*  close tcp connection */
-                tcp_connection_close(newpcb, client);
-                mem_free(client);
-
-                /* return memory error */
-                ret_err = ERR_MEM;
-            }
-        } else {
-            /*  close tcp connection */
-            tcp_connection_close(newpcb, client);
-            mem_free(client);
-
-            /* return memory error */
-            ret_err = ERR_MEM;
-        }
-    } else {
-        tcp_close(newpcb);
-        ret_err = ERR_ARG;
-    }
-    return ret_err;
-}
-
-/**
  * @brief tcp_receiv callback
  * @param arg: argument to be passed to receive callback
  * @param tpcb: tcp connection control block
  * @param err: receive error code
  * @retval err_t: returned error
  */
-static err_t tcp_recv_callback(void* arg, struct tcp_pcb* tpcb, struct pbuf* p, err_t err)
+err_t tcp_recv_callback(void* arg, struct tcp_pcb* tpcb, struct pbuf* p, err_t err)
 {
     struct tcp_struct* tcp_arg = (struct tcp_struct*)arg;
     err_t ret_err;
@@ -171,7 +100,7 @@ static err_t tcp_recv_callback(void* arg, struct tcp_pcb* tpcb, struct pbuf* p, 
  * @param  len: length of data sent
  * @retval err_t: returned error code
  */
-static err_t tcp_sent_callback(void* arg, struct tcp_pcb* tpcb, u16_t len)
+err_t tcp_sent_callback(void* arg, struct tcp_pcb* tpcb, u16_t len)
 {
     struct tcp_struct* tcp_arg = (struct tcp_struct*)arg;
 
@@ -194,7 +123,7 @@ static err_t tcp_sent_callback(void* arg, struct tcp_pcb* tpcb, u16_t len)
  *            ERR_ABRT: aborted through tcp_abort or by a TCP timer
  *            ERR_RST: the connection was reset by the remote host
  */
-static void tcp_err_callback(void* arg, err_t err)
+void tcp_err_callback(void* arg, err_t err)
 {
     struct tcp_struct* tcp_arg = (struct tcp_struct*)arg;
 

@@ -1,6 +1,7 @@
 #ifndef ARDUINO_LWIP_CLIENT_H
 #define ARDUINO_LWIP_CLIENT_H
 
+
 #include "Arduino.h"
 #include "CNetIf.h"
 #include "Client.h"
@@ -10,12 +11,15 @@
 #include "lwipTcp.h"
 #include "lwipTypes.h"
 
+#include <memory>
+
 class lwipClient : public Client {
 
 public:
     lwipClient();
     lwipClient(uint8_t sock);
-    lwipClient(struct tcp_struct* tcpClient);
+    lwipClient(std::shared_ptr<struct tcp_struct> tcpClient);
+    lwipClient(const lwipClient& m);
     virtual ~lwipClient();
 
     uint8_t status();
@@ -67,10 +71,10 @@ public:
     using Print::write;
 
 private:
-    struct tcp_struct* _tcp_client;
+    std::shared_ptr<struct tcp_struct> _tcp_client;
     uint16_t _timeout = 10000;
 
-    const bool _provided_tcp_client;
+    
 };
 
 #endif

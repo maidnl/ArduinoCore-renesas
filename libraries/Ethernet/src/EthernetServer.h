@@ -27,8 +27,7 @@ class EthernetServer : public lwipServer {
             }
          }
      }
-
-     struct tcp_struct *default_client = NULL;
+     std::shared_ptr<struct tcp_struct> default_client = nullptr;
      return EthernetClient(default_client);
    }
 };

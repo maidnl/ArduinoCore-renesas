@@ -8,7 +8,7 @@ extern "C" {
 
 /* -------------------------------------------------------------------------- */
 lwipClient::lwipClient()
-    : _tcp_client(NULL), _provided_tcp_client(false)
+    : _tcp_client(NULL)
 {
 }
 /* -------------------------------------------------------------------------- */
@@ -17,29 +17,29 @@ lwipClient::lwipClient()
 sketches but sock is ignored. */
 /* -------------------------------------------------------------------------- */
 lwipClient::lwipClient(uint8_t sock)
-    : _tcp_client(NULL), _provided_tcp_client(false)
+    : _tcp_client(NULL)
 
 {
 }
 /* -------------------------------------------------------------------------- */
 
 /* -------------------------------------------------------------------------- */
-lwipClient::lwipClient(struct tcp_struct* tcpClient)
-    : _tcp_client(tcpClient), _provided_tcp_client(true)
+lwipClient::lwipClient(std::shared_ptr<struct tcp_struct> tcpClient)
+    : _tcp_client(tcpClient)
 
 {
 }
 /* -------------------------------------------------------------------------- */
 
 /* -------------------------------------------------------------------------- */
-lwipClient::~lwipClient() 
-{
-    stop();
-
-    if(!_provided_tcp_client) {
-        mem_free(_tcp_client); 
-    }
+lwipClient::lwipClient(const lwipClient& m) {
+    _tcp_client = m._tcp_client;
+    _timeout = m._timeout;
 }
+/* -------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------- */
+lwipClient::~lwipClient() { }
 /* -------------------------------------------------------------------------- */
 
 /* -------------------------------------------------------------------------- */
@@ -62,8 +62,8 @@ int lwipClient::connect(IPAddress ip, uint16_t port)
     /* -------------------------------------------------------------------------- */
     if (_tcp_client == NULL) {
         /* Allocates memory for client */
-        _tcp_client = (struct tcp_struct*)mem_malloc(sizeof(struct tcp_struct));
-
+        _tcp_client = std::make_shared<struct tcp_struct>();
+        
         if (_tcp_client == NULL) {
             return 0;
         }
@@ -82,7 +82,7 @@ int lwipClient::connect(IPAddress ip, uint16_t port)
 
     uint32_t startTime = millis();
     ip_addr_t ipaddr;
-    tcp_arg(_tcp_client->pcb, _tcp_client);
+    tcp_arg(_tcp_client->pcb,  static_cast<void*>(_tcp_client.get()));
     if (ERR_OK != tcp_connect(_tcp_client->pcb, u8_to_ip_addr(rawIPAddress(ip), &ipaddr), port, &tcp_connected_callback)) {
         stop();
         return 0;
@@ -110,14 +110,23 @@ size_t lwipClient::write(uint8_t b)
 /* -------------------------------------------------------------------------- */
 size_t lwipClient::write(const uint8_t* buf, size_t size)
 {
-    /* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+    Serial.print("WRITE START ");
+    Serial.println(size);
+    for(int i = 0; i < size; i++) {
+        Serial.print((char)*(buf + i));
+    }
+    Serial.println();
+
     if ((_tcp_client == NULL) || (_tcp_client->pcb == NULL) || (buf == NULL) || (size == 0)) {
+        Serial.print("WRITE STOP A");
         return 0;
     }
 
     /* If client not connected or accepted, it can't write because connection is
     not ready */
     if ((_tcp_client->state != TCP_ACCEPTED) && (_tcp_client->state != TCP_CONNECTED)) {
+        Serial.print("WRITE STOP B");
         return 0;
     }
 
@@ -138,18 +147,21 @@ size_t lwipClient::write(const uint8_t* buf, size_t size)
                 bytes_left = size - bytes_sent;
             } else if (res != ERR_MEM) {
                 // other error, cannot continue
+                Serial.print("WRITE STOP C");
                 return 0;
             }
         }
 
         // Force to send data right now!
         if (ERR_OK != tcp_output(_tcp_client->pcb)) {
+            Serial.print("WRITE STOP D");
             return 0;
         }
         CLwipIf::getInstance().lwip_task();
 
     } while (bytes_sent != size);
-
+    Serial.print("WRITE STOP ");
+    Serial.println(size);
     return size;
 }
 
@@ -215,7 +227,7 @@ int lwipClient::peek()
 void lwipClient::flush()
 {
     /* -------------------------------------------------------------------------- */
-    if ((_tcp_client == NULL) || (_tcp_client->pcb == NULL)) {
+    if ((_tcp_client == nullptr) || (_tcp_client->pcb == NULL)) {
         return;
     }
     tcp_output(_tcp_client->pcb);
@@ -225,15 +237,20 @@ void lwipClient::flush()
 /* -------------------------------------------------------------------------- */
 void lwipClient::stop()
 {
-    /* -------------------------------------------------------------------------- */
-    if (_tcp_client == NULL) {
+/* -------------------------------------------------------------------------- */
+    Serial.println("CLIENT STOP");
+
+    if (_tcp_client == nullptr) {
         return;
     }
 
     // close tcp connection if not closed yet
     if (status() != TCP_CLOSING) {
-        tcp_connection_close(_tcp_client->pcb, _tcp_client);
+        tcp_connection_close(_tcp_client->pcb, static_cast<tcp_struct*>(_tcp_client.get()));
     }
+
+    _tcp_client.reset();
+    _tcp_client = nullptr;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -276,6 +293,6 @@ returns always 0. */
 /* -------------------------------------------------------------------------- */
 uint8_t lwipClient::getSocketNumber()
 {
-    /* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
     return 0;
 }
