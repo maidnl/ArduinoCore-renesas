@@ -157,7 +157,7 @@ size_t lwipServer::write(uint8_t b)
 
 size_t lwipServer::write(const uint8_t* buffer, size_t size)
 {
-    size_t n = 0;
+    size_t num = 0;
 
     accept();
 
@@ -167,11 +167,11 @@ size_t lwipServer::write(const uint8_t* buffer, size_t size)
                 lwipClient client(_tcp_client[n]);
                 uint8_t s = client.status();
                 if (s == TCP_ACCEPTED) {
-                    n += client.write(buffer, size);
+                    num += client.write(buffer, size);
                 }
             }
         }
     }
 
-    return n;
+    return num;
 }

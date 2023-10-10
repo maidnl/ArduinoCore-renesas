@@ -32,10 +32,19 @@ struct udp_struct {
 };
 
 /* TCP structure */
-struct tcp_struct {
+class tcp_struct {
+    public:
     struct tcp_pcb* pcb; /* pointer on the current tcp_pcb */
     struct pbuf_data data;
     tcp_client_states state; /* current connection state */
+    int sent;
+    tcp_struct() {
+        pcb = nullptr;
+        data.p = nullptr;
+        state = TCP_NONE;
+        sent = 0;
+    }    
+    
 };
 
 #endif

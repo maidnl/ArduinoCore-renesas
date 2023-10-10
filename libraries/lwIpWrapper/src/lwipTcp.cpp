@@ -102,11 +102,17 @@ err_t tcp_recv_callback(void* arg, struct tcp_pcb* tpcb, struct pbuf* p, err_t e
  */
 err_t tcp_sent_callback(void* arg, struct tcp_pcb* tpcb, u16_t len)
 {
+    Serial.print("SENT CALLBACK ");
+    Serial.println(len);
+
     struct tcp_struct* tcp_arg = (struct tcp_struct*)arg;
 
-    LWIP_UNUSED_ARG(len);
+    //LWIP_UNUSED_ARG(len);
 
     if ((tcp_arg != NULL) && (tcp_arg->pcb == tpcb)) {
+        tcp_arg->sent -= len;
+        Serial.print("SENT CALLBACK ~ sent ");
+        Serial.println(tcp_arg->sent);
         return ERR_OK;
     }
 

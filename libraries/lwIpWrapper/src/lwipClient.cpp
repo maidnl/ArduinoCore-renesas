@@ -113,22 +113,21 @@ size_t lwipClient::write(const uint8_t* buf, size_t size)
 /* -------------------------------------------------------------------------- */
     Serial.print("WRITE START ");
     Serial.println(size);
-    for(int i = 0; i < size; i++) {
-        Serial.print((char)*(buf + i));
-    }
-    Serial.println();
+    
+    
 
     if ((_tcp_client == NULL) || (_tcp_client->pcb == NULL) || (buf == NULL) || (size == 0)) {
-        Serial.print("WRITE STOP A");
+        
         return 0;
     }
 
     /* If client not connected or accepted, it can't write because connection is
     not ready */
     if ((_tcp_client->state != TCP_ACCEPTED) && (_tcp_client->state != TCP_CONNECTED)) {
-        Serial.print("WRITE STOP B");
+        
         return 0;
     }
+
 
     size_t max_send_size, bytes_to_send;
     size_t bytes_sent = 0;
@@ -147,28 +146,30 @@ size_t lwipClient::write(const uint8_t* buf, size_t size)
                 bytes_left = size - bytes_sent;
             } else if (res != ERR_MEM) {
                 // other error, cannot continue
-                Serial.print("WRITE STOP C");
+                
                 return 0;
             }
         }
 
         // Force to send data right now!
+        Serial.print("CALLED TCP OUTPUT...");
         if (ERR_OK != tcp_output(_tcp_client->pcb)) {
-            Serial.print("WRITE STOP D");
+            Serial.println("ERROR");
             return 0;
         }
+        Serial.println("OK");
         CLwipIf::getInstance().lwip_task();
 
     } while (bytes_sent != size);
-    Serial.print("WRITE STOP ");
-    Serial.println(size);
+    
+    _tcp_client->sent += bytes_sent;
+
     return size;
 }
 
 /* -------------------------------------------------------------------------- */
-int lwipClient::available()
-{
-    /* -------------------------------------------------------------------------- */
+int lwipClient::available() {
+/* -------------------------------------------------------------------------- */
     CLwipIf::getInstance().lwip_task();
     if (_tcp_client != NULL) {
         return _tcp_client->data.available;
@@ -177,9 +178,8 @@ int lwipClient::available()
 }
 
 /* -------------------------------------------------------------------------- */
-int lwipClient::read()
-{
-    /* -------------------------------------------------------------------------- */
+int lwipClient::read() {
+/* -------------------------------------------------------------------------- */
     uint8_t b;
     if ((_tcp_client != NULL) && (_tcp_client->data.p != NULL)) {
         __disable_irq();
@@ -238,12 +238,19 @@ void lwipClient::flush()
 void lwipClient::stop()
 {
 /* -------------------------------------------------------------------------- */
-    Serial.println("CLIENT STOP");
+    Serial.print("CLIENT STOP ");
+    Serial.print(_tcp_client->sent);
 
     if (_tcp_client == nullptr) {
         return;
     }
 
+    while(_tcp_client->sent > 0) {
+        CLwipIf::getInstance().lwip_task();
+    }
+    Serial.println("CLIENT STOP   --------------- ");
+
+    delay(100);
     // close tcp connection if not closed yet
     if (status() != TCP_CLOSING) {
         tcp_connection_close(_tcp_client->pcb, static_cast<tcp_struct*>(_tcp_client.get()));
