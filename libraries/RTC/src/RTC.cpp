@@ -437,18 +437,21 @@ void __attribute__((weak)) rtc_callback(rtc_callback_args_t *p_args) {
   }
 }
 
-rtc_instance_ctrl_t rtc_ctrl;
+rtc_instance_ctrl_t rtc_ctrl = {
+    .open = 0,
+};
+
+#ifndef RTC_CLOCK_SOURCE
+#define RTC_CLOCK_SOURCE RTC_CLOCK_SOURCE_LOCO
+#endif
+
 const rtc_error_adjustment_cfg_t rtc_err_cfg = { 
     .adjustment_mode = RTC_ERROR_ADJUSTMENT_MODE_AUTOMATIC,
     .adjustment_period = RTC_ERROR_ADJUSTMENT_PERIOD_10_SECOND,
     .adjustment_type = RTC_ERROR_ADJUSTMENT_NONE,
     .adjustment_value = 0, };
 rtc_cfg_t rtc_cfg  = { 
-    // TODO: change me to RTC_CLOCK_SOURCE_SUBCLK when capacitors are mounted
-    // https://arduino.atlassian.net/browse/HWH33-204
-    // Fixes counting time in VBAT mode on H33
-    // Leave as is for Santiago
-    .clock_source = RTC_CLOCK_SOURCE_LOCO,
+    .clock_source = RTC_CLOCK_SOURCE,
     .freq_compare_value_loco = 255, 
     .p_err_cfg = &rtc_err_cfg, 
     .alarm_ipl = (12), 
@@ -458,8 +461,7 @@ rtc_cfg_t rtc_cfg  = {
     .carry_ipl = (12),
     .carry_irq = FSP_INVALID_VECTOR,
     .p_callback = rtc_callback,
-    .p_context = NULL, 
-    
+    .p_context = NULL,
 };
 
 #ifdef __cplusplus
@@ -666,27 +668,15 @@ bool RTClock::setAlarmCallback(rtc_cbk_t fnc, RTCTime &t, AlarmMatch &m) {
         size_t cpy_size = (sizeof(at.time) <= sizeof(struct tm)) ? sizeof(at.time) : sizeof(struct tm);
         
         memcpy(&at.time, &alrm, cpy_size);
-        if(m.isMatchingSecond()) {
-            at.sec_match = true;
-        }
-        else if(m.isMatchingMinute()) {
-            at.min_match = true;
-        }
-        else if(m.isMatchingHour() ) {
-            at.hour_match = true;
-        }
-        else if(m.isMatchingDay() ) {
-            at.mday_match = true;
-        }
-        else if(m.isMatchingMonth()) {
-            at.mon_match = true;
-        }
-        else if(m.isMatchingYear()) {
-            at.year_match = true;
-        }
-        else if(m.isMatchingDayOfWeek()) {
-            at.dayofweek_match = true;
-        }
+
+        at.sec_match = m.isMatchingSecond();
+        at.min_match = m.isMatchingMinute();
+        at.hour_match = m.isMatchingHour();
+        at.mday_match = m.isMatchingDay();
+        at.mon_match = m.isMatchingMonth();
+        at.year_match = m.isMatchingYear();
+        at.dayofweek_match = m.isMatchingDayOfWeek();
+        
         if(IRQManager::getInstance().addPeripheral(IRQ_RTC,&rtc_irq_cfg)) {
             return setRtcAlarm(at);
         }
