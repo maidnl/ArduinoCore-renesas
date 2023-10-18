@@ -107,6 +107,12 @@ static const uint8_t A15 = PIN_A15;
 #undef PIN_LED
 #undef LED_BUILTIN
 
+#define LED_RED     (8u)
+#define LED_BLUE    (9u)
+#define LED_GREEN   (10u)
+
+
+
 /****** RTC CORE DEFINES *******/
 #define RTC_HOWMANY     0
 
@@ -154,11 +160,11 @@ static const uint8_t SS  =  PIN_SPI_CS;
 
 /****** CAN CORE DEFINES ******/
 
-#define CAN_HOWMANY       0
+#define CAN_HOWMANY       1
 
-#define PIN_CAN0_TX       (4)
-#define PIN_CAN0_RX       (5)
-#define PIN_CAN0_STBY    (-1)
+#define PIN_CAN0_TX       (12)
+#define PIN_CAN0_RX       (13)
+#define PIN_CAN0_STBY     (11)
 
 
 #define EXT_INTERRUPTS_HOWMANY 2
