@@ -58,7 +58,7 @@ extern "C" const PinMuxCfg_t g_pin_cfg[] = {
   { BSP_IO_PORT_00_PIN_13,    P013   }, /* (20) A6 HW rev 0.3                 */
   { BSP_IO_PORT_00_PIN_14,    P014   }, /* (21) A7 HW rev 0.3                 */
   { BSP_IO_PORT_00_PIN_15,    P015   }, /* (22) A8 HW rev 0.3                 */
-  { BSP_IO_PORT_01_PIN_01,    P100   }, /* (23) A9 HW rev 0.3                 */
+  { BSP_IO_PORT_01_PIN_00,    P100   }, /* (23) A9 HW rev 0.3                 */
   { BSP_IO_PORT_01_PIN_01,    P101   }, /* (24) A13 HW rev 0.3                */
   { BSP_IO_PORT_01_PIN_02,    P102   }, /* (25) A14 HW rev 0.3                */
   { BSP_IO_PORT_01_PIN_03,    P103   }, /* (26) A15 HW rev 0.3                */

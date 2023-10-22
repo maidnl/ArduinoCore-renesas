@@ -107,9 +107,6 @@ static const uint8_t A15 = PIN_A15;
 #undef PIN_LED
 #undef LED_BUILTIN
 
-#define LED_RED     (8u)
-#define LED_BLUE    (9u)
-#define LED_GREEN   (10u)
 
 
 
