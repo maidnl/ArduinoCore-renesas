@@ -240,3 +240,50 @@ muxto.upload.maximum_data_size=32768
 ##############################################################
 
 
+opta_analog.name=Arduino OPTA ANALOG
+opta_analog.build.core=arduino
+opta_analog.build.crossprefix=arm-none-eabi-
+opta_analog.build.compiler_path={runtime.tools.arm-none-eabi-gcc-7-2017q4.path}/bin/
+
+opta_analog.build.variant=OPTA_ANALOG
+opta_analog.build.mcu=cortex-m4
+opta_analog.build.architecture=cortex-m4
+opta_analog.build.fpu=-mfpu=fpv4-sp-d16
+opta_analog.build.float-abi=-mfloat-abi=hard
+
+opta_analog.build.board=OPTA_ANALOG
+opta_analog.build.defines=-DF_CPU=48000000 
+opta_analog.vid.0=0x2341
+opta_analog.pid.0=0x0071
+opta_analog.vid.1=0x2341
+opta_analog.pid.1=0x0171
+opta_analog.upload_port.0.vid=0x2341
+opta_analog.upload_port.0.pid=0x0071
+opta_analog.upload_port.1.vid=0x2341
+opta_analog.upload_port.1.pid=0x0171
+
+opta_analog.compiler.fsp.defines={build.variant.path}/defines.txt
+opta_analog.compiler.fsp.ldflags={build.variant.path}/ldflags.txt
+opta_analog.compiler.fsp.cflags=-mthumb "@{compiler.fsp.defines}"
+opta_analog.compiler.fsp.cxxflags=-mthumb "@{compiler.fsp.defines}"
+opta_analog.compiler.tinyusb.cflags=-DCFG_TUSB_MCU=OPT_MCU_RAXXX
+opta_analog.compiler.tinyusb.cxxflags=-DCFG_TUSB_MCU=OPT_MCU_RAXXX
+opta_analog.compiler.fsp.includes={build.variant.path}/includes.txt
+opta_analog.compiler.fsp.extra_ldflags=--specs=nano.specs -lstdc++ -lsupc++ -lm -lc -lgcc -lnosys
+opta_analog.compiler.fsp="{build.variant.path}/libs/libfsp.a"
+
+opta_analog.upload.tool=dfu-util
+opta_analog.upload.tool.default=dfu-util
+opta_analog.upload.protocol=
+opta_analog.upload.transport=
+opta_analog.upload.vid=0x2341
+opta_analog.upload.pid=0x0171
+opta_analog.upload.address=0x00010000
+opta_analog.upload.interface=0
+opta_analog.upload.use_1200bps_touch=false
+opta_analog.upload.wait_for_upload_port=false
+opta_analog.upload.native_usb=true
+opta_analog.upload.maximum_size=262144
+opta_analog.upload.maximum_data_size=32768
+
+##############################################################
