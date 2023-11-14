@@ -23,45 +23,47 @@ extern "C" unsigned int PINCOUNT_fn();
 #define PWM_1                      (5u)
 #define PWM_2                      (6u)
 #define PWM_3                      (7u)
+#define PWM_FAULT_1                (8u)
+#define PWM_FAULT_2                (9u)
 /* ++++++++++++++++++++++++++++++++++ LEDS +++++++++++++++++++++++++++++++++ */
-#define LED_1                      (8u)
-#define LED_2                      (9u)
-#define LED_3                      (10u)
-#define LED_4                      (11u)
-#define LED_5                      (12u)
-#define LED_6                      (13u)
-#define LED_7                      (14u)
-#define LED_8                      (15u)
+#define LED_1                      (10u)
+#define LED_2                      (11u)
+#define LED_3                      (12u)
+#define LED_4                      (13u)
+#define LED_5                      (14u)
+#define LED_6                      (15u)
+#define LED_7                      (16u)
+#define LED_8                      (17u)
 
 #define LED_ON                     HIGH
 #define LED_OFF                    LOW
 
-#define LED_RED                    (16u)
-#define LED_BLUE                   (17u)
-#define LED_GREEN                  (18u)
+#define LED_RED                    (18u)
+#define LED_BLUE                   (19u)
+#define LED_GREEN                  (20u)
 
 #define LED_RGB_ON                 HIGH
 #define LED_RGB_OFF                LOW
 /* +++++++++++++++++++++ IRQs FROM ANALOG BOARD ++++++++++++++++++++++++++++ */
-#define ALERT_1_IRQ1               (19u)
-#define ALERT_2_IRQ0               (20u)
-#define ADC_READY_1_IRQ12          (21u)
-#define ADC_READY_2_IRQ9           (22u)
+#define ALERT_1_IRQ1               (21u)
+#define ALERT_2_IRQ0               (22u)
+#define ADC_READY_1_IRQ12          (23u)
+#define ADC_READY_2_IRQ9           (24u)
 /* +++++++++++++++++++++++++++++++ DETECTS +++++++++++++++++++++++++++++++++ */
-#define DETECT_IN                  (23u)
-#define DETECT_OUT                 (24u)
+#define DETECT_IN                  (25u)
+#define DETECT_OUT                 (26u)
 /* +++++++++++++++++++++++++++++++++ UART ++++++++++++++++++++++++++++++++++ */
-#define UART_RX                    (25u)
-#define UART_TX                    (26u)
+#define UART_RX                    (27u)
+#define UART_TX                    (28u)
 /* +++++++++++++++++++++++++++++++++ I2C +++++++++++++++++++++++++++++++++++ */
-#define I2C_SCL                    (27u)
-#define I2C_SDA                    (28u)
+#define I2C_SCL                    (29u)
+#define I2C_SDA                    (30u)
 /* +++++++++++++++++++++++++++++++++ SPI +++++++++++++++++++++++++++++++++++ */
-#define SPI_MISO                   (29u)
-#define SPI_MOSI                   (30u)
-#define SPI_CK                     (31u)
-#define SPI_CS_1                   (32u)
-#define SPI_CS_2                   (33u)
+#define SPI_MISO                   (31u)
+#define SPI_MOSI                   (32u)
+#define SPI_CK                     (33u)
+#define SPI_CS_1                   (34u)
+#define SPI_CS_2                   (35u)
 
 /* ************************** UART CORE DEFINES **************************** */
 #define SERIAL_HOWMANY		        1

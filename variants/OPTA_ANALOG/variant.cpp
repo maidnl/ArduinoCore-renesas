@@ -116,15 +116,12 @@ void initVariant() {
 
   /* TO BE VERIFIED !! */
   FspTimer::set_initial_timer_channel_as_pwm(
-      GPT_TIMER, GET_CHANNEL(getPinCfgs(3, PIN_CFG_REQ_PWM)[0]));
+      GPT_TIMER, GET_CHANNEL(getPinCfgs(PWM_0, PIN_CFG_REQ_PWM)[0]));
   FspTimer::set_initial_timer_channel_as_pwm(
-      GPT_TIMER, GET_CHANNEL(getPinCfgs(5, PIN_CFG_REQ_PWM)[0]));
+      GPT_TIMER, GET_CHANNEL(getPinCfgs(PWM_1, PIN_CFG_REQ_PWM)[0]));
   FspTimer::set_initial_timer_channel_as_pwm(
-      GPT_TIMER, GET_CHANNEL(getPinCfgs(6, PIN_CFG_REQ_PWM)[0]));
+      GPT_TIMER, GET_CHANNEL(getPinCfgs(PWM_2, PIN_CFG_REQ_PWM)[0]));
   FspTimer::set_initial_timer_channel_as_pwm(
-      GPT_TIMER, GET_CHANNEL(getPinCfgs(9, PIN_CFG_REQ_PWM)[0]));
-  FspTimer::set_initial_timer_channel_as_pwm(
-      GPT_TIMER, GET_CHANNEL(getPinCfgs(10, PIN_CFG_REQ_PWM)[0]));
-  FspTimer::set_initial_timer_channel_as_pwm(
-      GPT_TIMER, GET_CHANNEL(getPinCfgs(11, PIN_CFG_REQ_PWM)[0]));
+      GPT_TIMER, GET_CHANNEL(getPinCfgs(PWM_3, PIN_CFG_REQ_PWM)[0]));
+  
 }
