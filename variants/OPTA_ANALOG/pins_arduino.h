@@ -20,9 +20,9 @@ extern "C" unsigned int PINCOUNT_fn();
 #define DIO_RTD_SWITCH_2           (3u)
 /* ++++++++++++++++++++++++++++++++++ PWMS +++++++++++++++++++++++++++++++++ */
 #define PWM_0                      (4u)
-#define PWM_1                      (5u)
+#define PWM_1                      (7u)
 #define PWM_2                      (6u)
-#define PWM_3                      (7u)
+#define PWM_3                      (5u)
 #define PWM_FAULT_1                (8u)
 #define PWM_FAULT_2                (9u)
 /* ++++++++++++++++++++++++++++++++++ LEDS +++++++++++++++++++++++++++++++++ */
@@ -42,8 +42,8 @@ extern "C" unsigned int PINCOUNT_fn();
 #define LED_BLUE                   (19u)
 #define LED_GREEN                  (20u)
 
-#define LED_RGB_ON                 HIGH
-#define LED_RGB_OFF                LOW
+#define LED_RGB_ON                 LOW
+#define LED_RGB_OFF                HIGH
 /* +++++++++++++++++++++ IRQs FROM ANALOG BOARD ++++++++++++++++++++++++++++ */
 #define ALERT_1_IRQ1               (21u)
 #define ALERT_2_IRQ0               (22u)
