@@ -289,6 +289,16 @@ void TwoWire::begin() {
 /* -------------------------------------------------------------------------- */
 void TwoWire::_begin(void) {
 /* -------------------------------------------------------------------------- */  
+  end();
+  is_master = true;
+  _begin();
+
+}
+
+
+/* -------------------------------------------------------------------------- */
+void TwoWire::_begin(void) {
+/* -------------------------------------------------------------------------- */  
   init_ok = true;
   int max_index = PINS_COUNT;
 
@@ -382,72 +392,33 @@ void TwoWire::_begin(void) {
     init_ok = false;
     return;
   }
+
+  I2CIrqReq_t irq_req;
+  irq_req.mcfg = &m_i2c_cfg; 
+  irq_req.scfg = &s_i2c_cfg;
   
-  if(is_master) {
-    /* master but IRQ has already been configured as slave */
-    if(slave_irq_added) {
-      m_i2c_cfg.txi_irq = s_i2c_cfg.txi_irq;
-      m_i2c_cfg.rxi_irq = s_i2c_cfg.rxi_irq;
-      m_i2c_cfg.tei_irq = s_i2c_cfg.tei_irq;
-      m_i2c_cfg.eri_irq = s_i2c_cfg.eri_irq;
-    } 
-
-    I2CIrqMasterReq_t irq_req;
-    irq_req.ctrl = &m_i2c_ctrl; 
-    irq_req.cfg = &m_i2c_cfg;
-    /* see note in the cfg_pins
-         the IRQ manager need to know the HW channel that in case of SCI 
-         peripheral is not the one in the cfg structure but the one in 
-         the Wire channel, so copy it in the request */
-    irq_req.hw_channel = channel;
-    if(is_sci) {
-      init_ok &= IRQManager::getInstance().addPeripheral(IRQ_SCI_I2C_MASTER,&irq_req);
-    }
-    else {
-      init_ok &= IRQManager::getInstance().addPeripheral(IRQ_I2C_MASTER,&irq_req);
-    }
-    master_irq_added = true;
-    
-	
-    if(FSP_SUCCESS == m_open(&m_i2c_ctrl,&m_i2c_cfg)) {
-       init_ok &= true;
-    } else {
-       init_ok = false;
-    }
-
-  } else {
-    if(master_irq_added) {
-       s_i2c_cfg.txi_irq = m_i2c_cfg.txi_irq;
-       s_i2c_cfg.rxi_irq = m_i2c_cfg.rxi_irq;
-       s_i2c_cfg.tei_irq = m_i2c_cfg.tei_irq;
-       s_i2c_cfg.eri_irq = m_i2c_cfg.eri_irq;
-    } 
-
-    init_ok &= IRQManager::getInstance().addPeripheral(IRQ_I2C_SLAVE,&s_i2c_cfg);
-    slave_irq_added = true;
-     
-    if(FSP_SUCCESS == s_open(&s_i2c_ctrl,&s_i2c_cfg)) {
-      init_ok &= true;
-    } else {
-      init_ok = false;
-    }
+  if(is_master) {    
+      if(is_sci) {
+        init_ok &= IRQManager::getInstance().addPeripheral(IRQ_SCI_I2C_MASTER,&irq_req);
+      }
+      else {
+        init_ok &= IRQManager::getInstance().addPeripheral(IRQ_I2C_MASTER,&irq_req);
+      }
+      if(FSP_SUCCESS == m_open(&m_i2c_ctrl,&m_i2c_cfg)) {
+         init_ok &= true;
+      }
+      else {
+         init_ok = false;
+      }
   }
-}
-
-/* -------------------------------------------------------------------------- */
-bool TwoWire::setAddress(uint16_t add) {
-/* -------------------------------------------------------------------------- */  
-  if(init_ok && !is_master) {
-    slave_address   = add;
-    s_i2c_cfg.slave = slave_address;
-    s_close(&s_i2c_ctrl);
-    if(FSP_SUCCESS == s_open(&s_i2c_ctrl,&s_i2c_cfg)) {
-        init_ok = true;
-    }
-    else {
-        init_ok = false;
-    }
-    return init_ok;
+  else {
+      init_ok &= IRQManager::getInstance().addPeripheral(IRQ_I2C_SLAVE,&irq_req);
+      if(FSP_SUCCESS == s_open(&s_i2c_ctrl,&s_i2c_cfg)) {
+         init_ok &= true;
+      }
+      else {
+         init_ok = false;
+      }
   }
   return false;
 }
@@ -473,24 +444,6 @@ bool TwoWire::setAddress(uint8_t add) {
 /* -------------------------------------------------------------------------- */
 bool TwoWire::setAddress(int add) {
 /* -------------------------------------------------------------------------- */  
-  if(init_ok && !is_master) {
-    slave_address   = (uint16_t)add;
-    s_i2c_cfg.slave = slave_address;
-    s_close(&s_i2c_ctrl);
-    if(FSP_SUCCESS == s_open(&s_i2c_ctrl,&s_i2c_cfg)) {
-        init_ok = true;
-    }
-    else {
-        init_ok = false;
-    }
-    return init_ok;
-  }
-  return false;
-}
-
-/* -------------------------------------------------------------------------- */
-void TwoWire::begin(uint16_t address) {
-/* -------------------------------------------------------------------------- */
   end();
   is_master = false;
   slave_address = address;
@@ -501,19 +454,13 @@ void TwoWire::begin(uint16_t address) {
 
 /* -------------------------------------------------------------------------- */
 void TwoWire::begin(int address) {
-/* -------------------------------------------------------------------------- */
-  end();
-  is_master = false;
-  slave_address = (uint16_t)address;
+/* -------------------------------------------------------------------------- */  
   begin((uint16_t)address);
 }
 
 /* -------------------------------------------------------------------------- */
 void TwoWire::begin(uint8_t address) {
-/* -------------------------------------------------------------------------- */
-  end();
-  is_master = false;
-  slave_address = (uint16_t)address;
+/* -------------------------------------------------------------------------- */  
   begin((uint16_t)address);
 }
 
@@ -526,22 +473,24 @@ void TwoWire::begin(uint8_t address) {
 void TwoWire::end(void) {
 /* -------------------------------------------------------------------------- */
 
-  if (init_ok) {
-    if (is_master) {
-      if (m_close != nullptr) {
+  if(init_ok) {
+    if(is_master) {
+      if(m_close != nullptr) {
         m_close(&m_i2c_ctrl);
-        R_BSP_IrqDisable(m_i2c_cfg.txi_irq);
-        R_BSP_IrqDisable(m_i2c_cfg.rxi_irq);
-        R_BSP_IrqDisable(m_i2c_cfg.tei_irq);
-        R_BSP_IrqDisable(m_i2c_cfg.eri_irq);
+        R_BSP_IrqDisable (m_i2c_cfg.txi_irq);
+        R_BSP_IrqDisable (m_i2c_cfg.rxi_irq);
+        R_BSP_IrqDisable (m_i2c_cfg.tei_irq);
+        R_BSP_IrqDisable (m_i2c_cfg.eri_irq);
+          
       }
     } else {
       if (s_close != nullptr) {
         s_close(&s_i2c_ctrl);
-        R_BSP_IrqDisable(s_i2c_cfg.txi_irq);
-        R_BSP_IrqDisable(s_i2c_cfg.rxi_irq);
-        R_BSP_IrqDisable(s_i2c_cfg.tei_irq);
-        R_BSP_IrqDisable(s_i2c_cfg.eri_irq);
+        R_BSP_IrqDisable (s_i2c_cfg.txi_irq);
+        R_BSP_IrqDisable (s_i2c_cfg.rxi_irq);
+        R_BSP_IrqDisable (s_i2c_cfg.tei_irq);
+        R_BSP_IrqDisable (s_i2c_cfg.eri_irq);
+        
       }
     }
   }
