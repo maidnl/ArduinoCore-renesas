@@ -22,7 +22,6 @@
   Version 2022 for Renesas RA4 by Daniele Aimo (d.aimo@arduino.cc)
 */
 
-#include "r_iic_slave.h"
 extern "C" {
   #include <stdlib.h>
   #include <string.h>
@@ -197,9 +196,7 @@ TwoWire::TwoWire(int scl, int sda, WireAddressMode_t am /*= ADDRESS_MODE_7_BITS*
   data_too_long(false),
   rx_index(0),
   tx_index(0),
-  require_sci(prefer_sci),
-  master_irq_added(false),
-  slave_irq_added(false) {
+  require_sci(prefer_sci) {
 /* -------------------------------------------------------------------------- */    
       m_i2c_cfg.rxi_irq = FSP_INVALID_VECTOR;
       m_i2c_cfg.txi_irq = FSP_INVALID_VECTOR;
@@ -255,9 +252,8 @@ done:
     ioport_sda = USE_SCI_EVEN_CFG(cfg_sda) ? IOPORT_PERIPHERAL_SCI0_2_4_6_8 : IOPORT_PERIPHERAL_SCI1_3_5_7_9;
     ioport_scl = USE_SCI_EVEN_CFG(cfg_scl) ? IOPORT_PERIPHERAL_SCI0_2_4_6_8 : IOPORT_PERIPHERAL_SCI1_3_5_7_9;
   
-    fsp_err_t err = R_IOPORT_PinCfg(&g_ioport_ctrl, g_pin_cfg[sda_pin].pin, (uint32_t) (IOPORT_CFG_PULLUP_ENABLE | IOPORT_CFG_PERIPHERAL_PIN | ioport_sda));
-    
-    err = R_IOPORT_PinCfg(&g_ioport_ctrl, g_pin_cfg[scl_pin].pin, (uint32_t) (IOPORT_CFG_PULLUP_ENABLE | IOPORT_CFG_PERIPHERAL_PIN | ioport_scl));
+    R_IOPORT_PinCfg(&g_ioport_ctrl, g_pin_cfg[sda_pin].pin, (uint32_t) (IOPORT_CFG_PULLUP_ENABLE | IOPORT_CFG_PERIPHERAL_PIN | ioport_sda));
+    R_IOPORT_PinCfg(&g_ioport_ctrl, g_pin_cfg[scl_pin].pin, (uint32_t) (IOPORT_CFG_PULLUP_ENABLE | IOPORT_CFG_PERIPHERAL_PIN | ioport_scl));
   
   }
   else {
@@ -268,26 +264,15 @@ done:
     ioport_sda = IOPORT_PERIPHERAL_IIC;
     ioport_scl = IOPORT_PERIPHERAL_IIC;
 
-    fsp_err_t err = R_IOPORT_PinCfg(&g_ioport_ctrl, g_pin_cfg[sda_pin].pin, (uint32_t) (IOPORT_CFG_PULLUP_ENABLE | IOPORT_CFG_DRIVE_MID | IOPORT_CFG_PERIPHERAL_PIN | ioport_sda));
-
-    err = R_IOPORT_PinCfg(&g_ioport_ctrl, g_pin_cfg[scl_pin].pin, (uint32_t) (IOPORT_CFG_PULLUP_ENABLE | IOPORT_CFG_DRIVE_MID | IOPORT_CFG_PERIPHERAL_PIN | ioport_scl));
+    R_IOPORT_PinCfg(&g_ioport_ctrl, g_pin_cfg[sda_pin].pin, (uint32_t) (IOPORT_CFG_PULLUP_ENABLE | IOPORT_CFG_DRIVE_MID | IOPORT_CFG_PERIPHERAL_PIN | ioport_sda));
+    R_IOPORT_PinCfg(&g_ioport_ctrl, g_pin_cfg[scl_pin].pin, (uint32_t) (IOPORT_CFG_PULLUP_ENABLE | IOPORT_CFG_DRIVE_MID | IOPORT_CFG_PERIPHERAL_PIN | ioport_scl));
   }
 
   return true;
 }
 
 /* -------------------------------------------------------------------------- */
-void TwoWire::begin() {
-/* -------------------------------------------------------------------------- */
-  end();
-  is_master = true;
-  _begin();
-}
-
-/* private version of begin so that it can be called both for slave and master
- * initialization */
-/* -------------------------------------------------------------------------- */
-void TwoWire::_begin(void) {
+void TwoWire::begin(void) {
 /* -------------------------------------------------------------------------- */  
   end();
   is_master = true;
@@ -310,6 +295,7 @@ void TwoWire::_begin(void) {
         ->>>>>  MASTER initialization
      * ----------------------------------- */
     if(is_master) {
+
       setClock(I2C_MASTER_RATE_STANDARD);
 
       if(is_sci) {
@@ -366,7 +352,6 @@ void TwoWire::_begin(void) {
         init_ok = false;
         return;
       }
-
       TwoWire::g_I2CWires[channel]      = this;
 
       s_open                            = R_IIC_SLAVE_Open;
@@ -420,29 +405,10 @@ void TwoWire::_begin(void) {
          init_ok = false;
       }
   }
-  return false;
 }
 
 /* -------------------------------------------------------------------------- */
-bool TwoWire::setAddress(uint8_t add) {
-/* -------------------------------------------------------------------------- */  
-  if(init_ok && !is_master) {
-    slave_address   = (uint16_t)add;
-    s_i2c_cfg.slave = slave_address;
-    s_close(&s_i2c_ctrl);
-    if(FSP_SUCCESS == s_open(&s_i2c_ctrl,&s_i2c_cfg)) {
-        init_ok = true;
-    }
-    else {
-        init_ok = false;
-    }
-    return init_ok;
-  }
-  return false;
-}
-
-/* -------------------------------------------------------------------------- */
-bool TwoWire::setAddress(int add) {
+void TwoWire::begin(uint16_t address) {
 /* -------------------------------------------------------------------------- */  
   end();
   is_master = false;
@@ -464,14 +430,9 @@ void TwoWire::begin(uint8_t address) {
   begin((uint16_t)address);
 }
 
-
-
-
-
-
 /* -------------------------------------------------------------------------- */
 void TwoWire::end(void) {
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */  
 
   if(init_ok) {
     if(is_master) {
@@ -483,8 +444,9 @@ void TwoWire::end(void) {
         R_BSP_IrqDisable (m_i2c_cfg.eri_irq);
           
       }
-    } else {
-      if (s_close != nullptr) {
+    }
+    else {
+      if(s_close != nullptr) {
         s_close(&s_i2c_ctrl);
         R_BSP_IrqDisable (s_i2c_cfg.txi_irq);
         R_BSP_IrqDisable (s_i2c_cfg.rxi_irq);
@@ -498,9 +460,10 @@ void TwoWire::end(void) {
 }
 
 
+
 /* -------------------------------------------------------------------------- */
 uint8_t TwoWire::read_from(uint8_t address, uint8_t* data, uint8_t length, unsigned int timeout_ms, bool sendStop) {
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */  
   /* ??? does this function make sense only for MASTER ???? */
   
   fsp_err_t err = FSP_ERR_ASSERTION;
@@ -527,9 +490,9 @@ uint8_t TwoWire::read_from(uint8_t address, uint8_t* data, uint8_t length, unsig
   return 0; /* ???????? return value ??????? */
 }
 
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */    
 uint8_t TwoWire::write_to(uint8_t address, uint8_t* data, uint8_t length, unsigned int timeout_ms, bool sendStop) {
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */  
   uint8_t rv = END_TX_OK;
   fsp_err_t err = FSP_ERR_ASSERTION;
   if(init_ok) {
@@ -570,9 +533,9 @@ uint8_t TwoWire::write_to(uint8_t address, uint8_t* data, uint8_t length, unsign
   return rv;
 }
 
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */    
 void TwoWire::setClock(uint32_t freq) {
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */      
   if(init_ok && is_master) {
     if(m_close != nullptr) {
       m_close(&m_i2c_ctrl); 
@@ -642,7 +605,7 @@ void TwoWire::setClock(uint32_t freq) {
 
 /* -------------------------------------------------------------------------- */
 void TwoWire::beginTransmission(uint32_t address) {
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */  
   if (init_ok) {
     data_too_long = false;
     master_tx_address = address;
@@ -659,13 +622,13 @@ void TwoWire::beginTransmission(uint16_t address) {
 
 /* -------------------------------------------------------------------------- */
 void TwoWire::beginTransmission(uint8_t address){
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */  
   beginTransmission((uint32_t)address);
 }
 
 /* -------------------------------------------------------------------------- */
 void TwoWire::beginTransmission(int address) {
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */  
   beginTransmission((uint32_t)address);
 }
 
@@ -675,7 +638,7 @@ void TwoWire::beginTransmission(int address) {
 
 /* -------------------------------------------------------------------------- */
 uint8_t TwoWire::endTransmission(bool sendStop) {
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */  
   uint8_t ret = write_to(master_tx_address, tx_buffer, tx_index, timeout, sendStop);
   transmission_begun = false;
   return ret;
@@ -683,7 +646,7 @@ uint8_t TwoWire::endTransmission(bool sendStop) {
 
 /* -------------------------------------------------------------------------- */
 uint8_t TwoWire::endTransmission(void) {
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */  
   return endTransmission(true);
 }
 
@@ -693,7 +656,7 @@ uint8_t TwoWire::endTransmission(void) {
 
 /* -------------------------------------------------------------------------- */
 size_t TwoWire::requestFrom(uint8_t address, size_t quantity, uint32_t iaddress, uint8_t isize, uint8_t sendStop) {
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */  
   if(init_ok) {
   
     if (isize > 0) {
@@ -735,13 +698,13 @@ size_t TwoWire::requestFrom(uint8_t address, size_t quantity, uint32_t iaddress,
 
 /* -------------------------------------------------------------------------- */
 size_t TwoWire::requestFrom(uint8_t address, size_t quantity, bool sendStop) {
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */  
 	return requestFrom((uint8_t)address, quantity, (uint32_t)0, (uint8_t)0, sendStop);
 }
 
 /* -------------------------------------------------------------------------- */
 size_t TwoWire::requestFrom(uint8_t address, size_t quantity) {
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */  
   return requestFrom((uint8_t)address, quantity, true);
 }
 
@@ -754,10 +717,9 @@ size_t TwoWire::requestFrom(uint8_t address, size_t quantity) {
 // or after beginTransmission(address)
 /* -------------------------------------------------------------------------- */
 size_t TwoWire::write(uint8_t data) {
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */  
   if(init_ok) {
     if(is_master) {
-      
       if(transmission_begun) {
         if(tx_index >= I2C_BUFFER_LENGTH) {
           data_too_long = true;
@@ -784,7 +746,7 @@ size_t TwoWire::write(uint8_t data) {
 // or after beginTransmission(address)
 /* -------------------------------------------------------------------------- */
 size_t TwoWire::write(const uint8_t *data, size_t quantity) {
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */  
   if(init_ok) {
     if(is_master) {
     // in master transmitter mode
@@ -808,14 +770,14 @@ size_t TwoWire::write(const uint8_t *data, size_t quantity) {
 // sets function called on slave write
 /* -------------------------------------------------------------------------- */
 void TwoWire::onReceive( I2C_onRxCallback_f f ) {
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */  
   rx_callback = f;
 }
 
 // sets function called on slave read
 /* -------------------------------------------------------------------------- */
 void TwoWire::onRequest( I2C_onTxCallback_f f ) {
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */  
   tx_callback = f;
 }
 
@@ -827,7 +789,7 @@ void TwoWire::onRequest( I2C_onTxCallback_f f ) {
 
 /* -------------------------------------------------------------------------- */
 int TwoWire::available(void) {
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */  
   return rx_index - rx_extract_index;
 }
 
@@ -836,7 +798,7 @@ int TwoWire::available(void) {
 // or after requestFrom(address, numBytes)
 /* -------------------------------------------------------------------------- */
 int TwoWire::read(void) {
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */  
   int rv = -1;
   
   // get each successive byte on each call
@@ -853,7 +815,7 @@ int TwoWire::read(void) {
 // or after requestFrom(address, numBytes)
 /* -------------------------------------------------------------------------- */
 int TwoWire::peek(void) {
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */  
   int rv = -1;
   
   // get each successive byte on each call
@@ -866,9 +828,11 @@ int TwoWire::peek(void) {
 
 /* -------------------------------------------------------------------------- */
 void TwoWire::flush(void) {
-/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */  
   while(bus_status != WIRE_STATUS_TX_COMPLETED && bus_status != WIRE_STATUS_TRANSACTION_ABORTED) {}
 }
+
+
 
 
 #if WIRE_HOWMANY > 0
