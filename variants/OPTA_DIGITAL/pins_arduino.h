@@ -9,26 +9,10 @@ extern "C" unsigned int PINCOUNT_fn();
 // Pin count
 // ----
 #define PINS_COUNT           (PINCOUNT_fn())
-#define NUM_DIGITAL_PINS     (14u)
+#define NUM_DIGITAL_PINS     (8u)
 #define NUM_ANALOG_INPUTS    (16u)
 #define NUM_ANALOG_OUTPUTS   (0u)
 
-#define PIN_A0   (14u)
-#define PIN_A1   (15u)
-#define PIN_A2   (16u)
-#define PIN_A3   (17u)
-#define PIN_A4   (18u)
-#define PIN_A5   (19u)
-#define PIN_A6   (20u)
-#define PIN_A7   (21u)
-#define PIN_A8   (22u)
-#define PIN_A9   (23u)
-#define PIN_A10   (24u)
-#define PIN_A11   (25u)
-#define PIN_A12   (26u)
-#define PIN_A13   (27u)
-#define PIN_A14   (28u)
-#define PIN_A15   (29u)
 
 #define DAC8_HOWMANY (0)
 #define DAC12_HOWMANY (0)
@@ -52,22 +36,7 @@ extern "C" unsigned int PINCOUNT_fn();
 #undef A13
 #undef A14
 #undef A15
-static const uint8_t A0 = PIN_A0;
-static const uint8_t A1 = PIN_A1;
-static const uint8_t A2 = PIN_A2;
-static const uint8_t A3 = PIN_A3;
-static const uint8_t A4 = PIN_A4;
-static const uint8_t A5 = PIN_A5;
-static const uint8_t A6 = PIN_A6;
-static const uint8_t A7 = PIN_A7;
-static const uint8_t A8 = PIN_A8;
-static const uint8_t A9 = PIN_A9;
-static const uint8_t A10 = PIN_A10;
-static const uint8_t A11 = PIN_A11;
-static const uint8_t A12 = PIN_A12;
-static const uint8_t A13 = PIN_A13;
-static const uint8_t A14 = PIN_A14;
-static const uint8_t A15 = PIN_A15;
+
 
 // Digital pins
 // -----------
@@ -85,46 +54,93 @@ static const uint8_t A15 = PIN_A15;
 #undef D11
 #undef D12
 #undef D13
-#define D0  (0u)
-#define D1  (1u)
-#define D2  (2u)
-#define D3  (3u)
-#define D4  (4u)
-#define D5  (5u)
-#define D6  (6u)
-#define D7  (7u)
-#define D8  (8u)
-#define D9  (9u)
-#define D10 (10u)
-#define D11 (11u)
-#define D12 (12u)
-#define D13 (13u)
 
-// LEDs
-// ----
-#define PIN_LED     (13u)
-#define LED_BUILTIN PIN_LED
+/* ++++++++++++++++++++++++++++ DIGITAL OUTPUTS ++++++++++++++++++++++++++++ */
+#define D0                       (0u)
+#define D1                       (1u)
+#define D2                       (2u)
+#define D3                       (3u)
+#define D4                       (4u)
+#define D5                       (5u)
+#define D6                       (6u)
+#define D7                       (7u)
+/* ++++++++++++++++++++++++++++++++++ LEDS +++++++++++++++++++++++++++++++++ */
+#define LED_RED                    (8u)
+#define LED_BLUE                   (9u)
+#define LED_GREEN                  (10u)
+
+#define LED_RGB_ON                 LOW
+#define LED_RGB_OFF                HIGH
+/* ++++++++++++++++++++++++++++++++++ CAN ++++++++++++++++++++++++++++++++++ */
+#define CAN_ENABLE                 (11u)
+#define CAN_TX                     (12u)
+#define CAN_RX                     (13u)
+/* ++++++++++++++++++++++++++++ ANALOG INPUTS ++++++++++++++++++++++++++++++ */
+#define AN0                        (14u)
+#define AN1                        (15u)
+#define AN2                        (16u)
+#define AN3                        (17u)
+#define AN4                        (18u)
+#define AN5                        (19u)
+#define AN6                        (20u)
+#define AN7                        (21u)
+#define AN8                        (22u)
+#define AN9                        (23u)
+#define AN10                       (24u)
+#define AN11                       (25u)
+#define AN12                       (26u)
+#define AN13                       (27u)
+#define AN14                       (28u)
+#define AN15                       (29u)
+/* +++++++++++++++++++++++++++++++ DETECTS +++++++++++++++++++++++++++++++++ */
+#define DETECT_IN                  (30u)
+#define DETECT_OUT                 (31u)
+/* +++++++++++++++++++++++++++++++++ UART ++++++++++++++++++++++++++++++++++ */
+#define UART_RX                    (32u)
+#define UART_TX                    (33u)
+/* +++++++++++++++++++++++++++++++++ I2C +++++++++++++++++++++++++++++++++++ */
+#define I2C_SDA                    (34u)
+#define I2C_SCL                    (35u)
+/* +++++++++++++++++++++++++++++++++ RS485 +++++++++++++++++++++++++++++++++ */
+#define RS485_DE                   (36u)
+#define RS485_RE_                  (37u)
+#define RS485_RX                   (38u)
+#define RS485_TX                   (39u)
+
+
+static const uint8_t A0 = AN0;
+static const uint8_t A1 = AN1;
+static const uint8_t A2 = AN2;
+static const uint8_t A3 = AN3;
+static const uint8_t A4 = AN4;
+static const uint8_t A5 = AN5;
+static const uint8_t A6 = AN6;
+static const uint8_t A7 = AN7;
+static const uint8_t A8 = AN8;
+static const uint8_t A9 = AN9;
+static const uint8_t A10 = AN10;
+static const uint8_t A11 = AN11;
+static const uint8_t A12 = AN12;
+static const uint8_t A13 = AN13;
+static const uint8_t A14 = AN14;
+static const uint8_t A15 = AN15;
+
+
 #undef PIN_LED
 #undef LED_BUILTIN
-
-
-
 
 /****** RTC CORE DEFINES *******/
 #define RTC_HOWMANY     0
 
-
 /****** UART CORE DEFINES ******/
-
 #define SERIAL_HOWMANY		 1
-#define UART1_TX_PIN        32
-#define UART1_RX_PIN        33
+#define UART1_TX_PIN        UART_RX
+#define UART1_RX_PIN        UART_TX
 
 /****** WIRE CORE DEFINES ******/
-
 #define WIRE_HOWMANY      1
-#define WIRE_SDA_PIN      34 
-#define WIRE_SCL_PIN      35 
+#define WIRE_SDA_PIN      I2C_SDA 
+#define WIRE_SCL_PIN      I2C_SCL 
 
 static const uint8_t SDA = WIRE_SDA_PIN;
 static const uint8_t SCL = WIRE_SDA_PIN;
@@ -132,7 +148,6 @@ static const uint8_t SCL = WIRE_SDA_PIN;
 /****** SPI CORE DEFINES ******/
 
 #define SPI_HOWMANY       0
-
 #define PIN_SPI_MOSI  (11)
 #define PIN_SPI_MISO  (12)
 #define PIN_SPI_SCK   (13)
@@ -146,7 +161,6 @@ static const uint8_t CS  =  PIN_SPI_CS;
 static const uint8_t SS  =  PIN_SPI_CS;
 
 /****** GTP CORE DEFINES *******/
-
 #define GTP32_HOWMANY     2
 #define GTP16_HOWMANY     6
 #define GPT_HOWMANY       8
@@ -154,15 +168,11 @@ static const uint8_t SS  =  PIN_SPI_CS;
 /****** AGT CORE DEFINES *******/
 #define AGT_HOWMANY       2
 
-
 /****** CAN CORE DEFINES ******/
-
 #define CAN_HOWMANY       1
-
-#define PIN_CAN0_TX       (12)
-#define PIN_CAN0_RX       (13)
-#define PIN_CAN0_STBY     (11)
-
+#define PIN_CAN0_TX       CAN_TX
+#define PIN_CAN0_RX       CAN_RX
+#define PIN_CAN0_STBY     CAN_ENABLE
 
 #define EXT_INTERRUPTS_HOWMANY 2
 
