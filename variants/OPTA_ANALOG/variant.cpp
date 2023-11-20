@@ -89,6 +89,19 @@ unsigned int PINCOUNT_fn() {
 #include "FspTimer.h"
 
 void initVariant() {
+  pinMode(SPI_CS_1,OUTPUT);
+  pinMode(SPI_CS_2,OUTPUT);
+  digitalWrite(SPI_CS_1,HIGH);
+  digitalWrite(SPI_CS_2,HIGH);
+
+  pinMode(DIO_RESET_1,OUTPUT);
+  pinMode(DIO_RESET_2,OUTPUT);
+  digitalWrite(DIO_RESET_1,HIGH);
+  digitalWrite(DIO_RESET_2,HIGH);
+
+
+
+
   pinMode(LED_1, OUTPUT);
   digitalWrite(LED_1, LED_OFF);
   pinMode(LED_2, OUTPUT);
