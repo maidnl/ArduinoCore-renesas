@@ -99,7 +99,8 @@ void initVariant() {
   digitalWrite(DIO_RESET_1,HIGH);
   digitalWrite(DIO_RESET_2,HIGH);
 
-
+  pinMode(DIO_RTD_SWITCH_1,OUTPUT);
+  pinMode(DIO_RTD_SWITCH_2,OUTPUT);
 
 
   pinMode(LED_1, OUTPUT);
