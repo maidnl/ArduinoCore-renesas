@@ -35,7 +35,7 @@ extern "C" const PinMuxCfg_t g_pin_cfg[] = {
     {BSP_IO_PORT_01_PIN_09, P109}, /* (10)  LED_1 */
     {BSP_IO_PORT_01_PIN_06, P106}, /* (11)  LED_2 */
     {BSP_IO_PORT_00_PIN_15, P015}, /* (12) LED_3 */
-    {BSP_IO_PORT_00_PIN_09, P014}, /* (13) LED_4 */
+    {BSP_IO_PORT_00_PIN_14, P014}, /* (13) LED_4 */
     {BSP_IO_PORT_00_PIN_13, P013}, /* (14) LED_5 */
     {BSP_IO_PORT_00_PIN_12, P012}, /* (15) LED_6 */
     {BSP_IO_PORT_00_PIN_04, P004}, /* (16) LED_7 */
@@ -101,6 +101,12 @@ void initVariant() {
 
   pinMode(DIO_RTD_SWITCH_1,OUTPUT);
   pinMode(DIO_RTD_SWITCH_2,OUTPUT);
+
+  digitalWrite(DIO_RTD_SWITCH_1,LOW);
+  digitalWrite(DIO_RTD_SWITCH_2,LOW);
+
+  
+
 
 
   pinMode(LED_1, OUTPUT);
