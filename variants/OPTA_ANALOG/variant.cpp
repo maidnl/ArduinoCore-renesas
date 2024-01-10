@@ -32,14 +32,14 @@ extern "C" const PinMuxCfg_t g_pin_cfg[] = {
     {BSP_IO_PORT_01_PIN_10, P110}, /* (8) PWM fault 1 */
     {BSP_IO_PORT_05_PIN_01, P501}, /* (9) PwM_fault 2 */
     /* ++++++++++++++++++++++++++++++++++ LEDS ++++++++++++++++++++++++++++++ */
-    {BSP_IO_PORT_01_PIN_09, P109}, /* (10)  LED_1 */
-    {BSP_IO_PORT_01_PIN_06, P106}, /* (11)  LED_2 */
-    {BSP_IO_PORT_00_PIN_15, P015}, /* (12) LED_3 */
-    {BSP_IO_PORT_00_PIN_14, P014}, /* (13) LED_4 */
-    {BSP_IO_PORT_00_PIN_13, P013}, /* (14) LED_5 */
-    {BSP_IO_PORT_00_PIN_12, P012}, /* (15) LED_6 */
-    {BSP_IO_PORT_00_PIN_04, P004}, /* (16) LED_7 */
-    {BSP_IO_PORT_00_PIN_11, P011}, /* (17) LED_8 */
+    {BSP_IO_PORT_00_PIN_11, P011}, /* (10) LED_1 */
+    {BSP_IO_PORT_00_PIN_04, P004}, /* (11) LED_2 */
+    {BSP_IO_PORT_00_PIN_12, P012}, /* (12) LED_3 */
+    {BSP_IO_PORT_00_PIN_13, P013}, /* (13) LED_4 */
+    {BSP_IO_PORT_00_PIN_14, P014}, /* (14) LED_5 */
+    {BSP_IO_PORT_00_PIN_15, P015}, /* (15) LED_6 */
+    {BSP_IO_PORT_01_PIN_06, P106}, /* (16) LED_7 */
+    {BSP_IO_PORT_01_PIN_09, P109}, /* (17) LED_8 */
 
     {BSP_IO_PORT_01_PIN_13, P113}, /* (18) LED_RED */
     {BSP_IO_PORT_04_PIN_10, P410}, /* (19) LED_BLUE */
