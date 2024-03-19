@@ -111,8 +111,8 @@ void initVariant() {
 
   pinMode(LDAC1,OUTPUT);
   pinMode(LDAC2,OUTPUT);
-  digitalWrite(LDAC1,HIGH);
-  digitalWrite(LDAC2,HIGH);
+  digitalWrite(LDAC1,LOW);
+  digitalWrite(LDAC2,LOW);
   
 
 
